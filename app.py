@@ -10,6 +10,8 @@ from datetime import datetime
 # Create a Flask application instance
 app = Flask(__name__)
 
+dns_provider = os.getenv("DNS_PROVIDER", "route53")
+
 def load_acme():
     try:
         with open('/cert/acme.json', 'r') as file:
@@ -33,7 +35,7 @@ def list_certificates():
     data = load_acme()
     retval={}
     try:
-        for cert in data["route53"]["Certificates"]:
+        for cert in data[dns_provider]["Certificates"]:
             main_domain = cert["domain"]["main"]
         
             
@@ -70,7 +72,7 @@ def get_certificate(cert_main_domain, extract):
 
     data = load_acme()
     
-    for cert in data["route53"]["Certificates"]:
+    for cert in data["dns_provider"]["Certificates"]:
         if cert["domain"]["main"] == cert_main_domain:
             if extract is False:
                 return jsonify({ "cert" : cert["certificate"], "key" : cert["key"]})
