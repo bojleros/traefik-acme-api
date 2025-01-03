@@ -97,4 +97,4 @@ jobs:
         run: |
           echo "Built and Pushed Docker Image" >> $GITHUB_ENV
           echo "Docker Image: ${IMAGE}" >> $GITHUB_ENV
-          echo "Artifact URL: https://github.com/${{ github.repository }}/packages/container/${{ env.IMAGE_NAME }}/versions/${{ steps.autotag.outputs.new_tag || 'unknown' }}/" >> $GITHUB_ENV
+          echo "Artifact URL: https://github.com/${{ github.repository }}/packages/container/${IMAGE_NAME}/versions/${{ steps.autotag.outputs.new_tag || 'unknown' }}/" >> $GITHUB_ENV
