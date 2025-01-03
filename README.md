@@ -19,9 +19,9 @@ As long as you have Traefik with the docker provider configured you can use foll
 ```
 # make sure traefik is configured to serve over https only and to add some auth!
     --label traefik.enable=true \
-    --label traefik.http.routers.traefik-acme-api.rule="Host(`traefik-acme-api.whatever.yourdomain`)" \
+    --label traefik.http.routers.traefik-acme-api.rule="Host(`cert-api.int.barek.org`)" \
     --label traefik.http.routers.traefik-acme-api.tls=true \
-    --label traefik.http.routers.traefik-acme-api.loadbalancer.server.port=8080
+    --label traefik.http.services.traefik-acme-api.loadbalancer.server.port=8081
 ```
 
 
