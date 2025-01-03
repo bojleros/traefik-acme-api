@@ -72,7 +72,7 @@ def get_certificate(cert_main_domain, extract):
 
     data = load_acme()
     
-    for cert in data["dns_provider"]["Certificates"]:
+    for cert in data[dns_provider]["Certificates"]:
         if cert["domain"]["main"] == cert_main_domain:
             if extract is False:
                 return jsonify({ "cert" : cert["certificate"], "key" : cert["key"]})
