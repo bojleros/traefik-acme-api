@@ -92,3 +92,9 @@ jobs:
         # This step uses the identity token to provision an ephemeral certificate
         # against the sigstore community Fulcio instance.
         run: echo "${TAGS}" | xargs -I {} cosign sign --yes {}@${DIGEST}
+
+      - name: Display Docker Image in Run Summary
+        run: |
+          echo "Built and Pushed Docker Image" >> $GITHUB_ENV
+          echo "Docker Image: ${{ env.IMAGE }}" >> $GITHUB_ENV
+          echo "Artifact URL: https://github.com/${{ github.repository }}/packages/container/${{ env.IMAGE_NAME }}/versions/${{ steps.autotag.outputs.new_tag || 'unknown' }}/" >> $GITHUB_ENV
