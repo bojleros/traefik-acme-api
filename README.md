@@ -185,6 +185,7 @@ http:
       compress: {}
 ```
 
+You can start the traefik with a systemd service (note Restart=always and RestartSec=5)
 ```
 # systemctl cat cert_api_traefik
 # /etc/systemd/system/cert_api_traefik.service
@@ -216,27 +217,30 @@ WantedBy=multi-user.target
 
 ## Configure traefik-acme-api
 
+Generate auth bcrypted auth material:
 ```
-#generate auth bcrypted auth material
-htpasswd -nB admin
+htpasswd -nB user
+```
 
+Make sure that directory containing acme.json gets mounted into /cert
+We assume that static and dynamic Traefik config is in place
+Provide the output of htpasswd into the middleware config
+```
+podman run -it --rm  -v /etc/traefik/cert:/cert \
+    --label traefik.enable=true \
+    --label traefik.http.routers.traefik-acme-api.rule='Host(`cert-api.int.barek.org`)' \
+    --label traefik.http.routers.traefik-acme-api.tls=true \
+    --label traefik.http.services.traefik-acme-api.loadbalancer.server.port=8080 \
+    --label traefik.http.routers.traefik-acme-api.entrypoints=websecure \
+    --label traefik.http.middlewares.traefik-acme-api-auth.basicauth.users='<htpasswd_output here>' \
+    --label traefik.http.routers.traefik-acme-api.middlewares=traefik-acme-api-auth \
+    ghcr.io/bojleros/traefik-acme-api:v0.0.2-beta.8
+```
 
-# make sure that directory containing acme.json gets mounted into /cert
-# we assume that static and dynamic Traefik config is in place
-podman run -it --rm \
--e GUNICORN_CMD_ARGS="--bind 0.0.0.0:8081 --access-logfile - --error-logfile -" \
--v /etc/traefik/cert:/cert \
---label traefik.enable=true \
---label traefik.http.routers.traefik-acme-api.rule='Host(`api.whatever.yourdomain`)' \
---label traefik.http.routers.traefik-acme-api.tls=true \
---label traefik.http.services.traefik-acme-api.loadbalancer.server.port=8081 \
---label traefik.http.routers.traefik-acme-api.entrypoints=websecure \
---label traefik.http.middlewares.traefik-acme-api.basicauth.users='htpaswd output material here' \
---label traefik.http.routers.traefik-acme-api.middlewares=traefik-acme-api \
-ghcr.io/bojleros/traefik-acme-api:v0.0.2-beta.0
+Optionally check the traefik dashboard.
 
-
-# try
+Given that records A/CNAME were already correctly configured it's time to try following:
+```
 curl -u "user:pass" -H "Accept: application/json" -H "Content-Type: application/json" https://api.whatever.yourdomain/api/v1/certificates
 
 ```
