@@ -96,5 +96,4 @@ jobs:
       - name: Display Docker Image in Run Summary
         run: |
           echo "Built and Pushed Docker Image" >> $GITHUB_STEP_SUMMARY
-          echo "Docker Image: ${IMAGE}" >> $GITHUB_STEP_SUMMARY
-          echo "Artifact URL: https://github.com/${{ github.repository }}/packages/container/${IMAGE_NAME}/versions/${{ steps.autotag.outputs.new_tag || 'unknown' }}/" >> $GITHUB_STEP_SUMMARY
+          echo "Docker Image: **${IMAGE}**" >> $GITHUB_STEP_SUMMARY
