@@ -10,19 +10,31 @@ This basic service is designed to be deployed with a close proximity to the Trae
 # How to run it
 
 ```
+#generate auth bcrypted auth material
+htpasswd -nB admin
+
+
 # make sure that directory containing acme.json gets mounted into /cert
-podman run -it --rm -v test:/cert:z traefik-acme-api
+# we assume that static and dynamic Traefik config is in place
+podman run -it --rm \
+-e GUNICORN_CMD_ARGS="--bind 0.0.0.0:8081 --access-logfile - --error-logfile -" \
+-v /etc/traefik/cert:/cert \
+--label traefik.enable=true \
+--label traefik.http.routers.traefik-acme-api.rule='Host(`api.whatever.yourdomain`)' \
+--label traefik.http.routers.traefik-acme-api.tls=true \
+--label traefik.http.services.traefik-acme-api.loadbalancer.server.port=8081 \
+--label traefik.http.routers.traefik-acme-api.entrypoints=websecure \
+--label traefik.http.middlewares.traefik-acme-api.basicauth.users='htpaswd output material here' \
+--label traefik.http.routers.traefik-acme-api.middlewares=traefik-acme-api \
+ghcr.io/bojleros/traefik-acme-api:v0.0.2-beta.0
+
+
+# try
+curl -u "user:pass" -H "Accept: application/json" -H "Content-Type: application/json" https://api.whatever.yourdomain/api/v1/certificates
 
 ```
 
-As long as you have Traefik with the docker provider configured you can use following settings to expose api:
-```
-# make sure traefik is configured to serve over https only and to add some auth!
-    --label traefik.enable=true \
-    --label traefik.http.routers.traefik-acme-api.rule="Host(`cert-api.int.barek.org`)" \
-    --label traefik.http.routers.traefik-acme-api.tls=true \
-    --label traefik.http.services.traefik-acme-api.loadbalancer.server.port=8081
-```
+
 
 
 ### How to use it
