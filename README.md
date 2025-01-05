@@ -14,7 +14,7 @@ Following example is going to cover deployment on regular operating system howev
 ## Configure Traefik
 
 Traefik is going to act primarly as certificate management agent.
-Config coniguration tree is shown below:
+Config configuration tree is shown below:
 ```
 /etc/traefik/
 ├── cert
@@ -228,7 +228,7 @@ Provide the output of htpasswd into the middleware config
 ```
 podman run -it --rm  -v /etc/traefik/cert:/cert \
     --label traefik.enable=true \
-    --label traefik.http.routers.traefik-acme-api.rule='Host(`cert-api.int.barek.org`)' \
+    --label traefik.http.routers.traefik-acme-api.rule='Host(`cert-api.int.whatever.yourdomain`)' \
     --label traefik.http.routers.traefik-acme-api.tls=true \
     --label traefik.http.services.traefik-acme-api.loadbalancer.server.port=8080 \
     --label traefik.http.routers.traefik-acme-api.entrypoints=websecure \
