@@ -78,7 +78,7 @@ def get_certificate(cert_main_domain, extract):
         return (
             jsonify(
                 {
-                    "error": "In extraction call last element of a path muyst be crt or key"
+                    "error": "In extraction call last element of a path must be crt or key"
                 }
             ),
             400,
